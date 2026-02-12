@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+
+# Exclude all markdown except README
+*.md
+!README.md
+
+# Exclude test/debug scripts
+test-tools.ts
+debug-protocols.ts
+
+.claude
