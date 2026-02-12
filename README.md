@@ -1,6 +1,11 @@
-# Corvus
+<div align="center">
+  <img src="assets/corvus-logo.png" alt="Corvus Logo" width="200"/>
+  <h1>Corvus</h1>
+  <p>Solana DeFi intelligence via Model Context Protocol</p>
+  <p>Natural language interface for querying wallets, DeFi positions, protocol metrics, and token prices on Solana</p>
+</div>
 
-Solana DeFi intelligence via Model Context Protocol. Natural language interface for querying wallets, DeFi positions, protocol metrics, and token prices on Solana.
+---
 
 ## Quick Start
 
@@ -11,7 +16,7 @@ Solana DeFi intelligence via Model Context Protocol. Natural language interface 
 ### Installation
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Allen-Saji/corvus.git
 cd corvus
 npm install
 
@@ -38,6 +43,18 @@ Data (Static registries)
 
 **Design Principle:** All data fetching, validation, formatting, and error handling happens inside the tools. The LLM only selects which tool to use.
 
+## Archestra Integration
+
+Corvus is designed to run on Archestra's MCP platform, which provides:
+
+- **Chat UI** - ChatGPT-like interface with zero frontend work
+- **Dual LLM Security** - Isolates tool responses to prevent prompt injection from on-chain data
+- **MCP Gateway** - Exposes the agent as an API endpoint for external integrations
+- **Observability** - Full traces of every tool call with token usage and latency metrics
+- **Cost Controls** - Per-agent token limits and automatic model switching
+
+The platform handles security, hosting, and observability while Corvus focuses purely on Solana data intelligence.
+
 ## Available Tools
 
 ### Wallet Intelligence
@@ -62,26 +79,18 @@ Data (Static registries)
 
 **send_telegram_alert** - Send formatted alerts to Telegram with markdown support
 
-## Project Structure
+## Progress
 
-```
-src/
-├── index.ts              # MCP server entry point
-├── types.ts              # TypeScript interfaces
-├── lib/                  # API clients & utilities
-│   ├── validation.ts
-│   ├── helius.ts
-│   └── defillama.ts
-├── data/                 # Static registries
-│   ├── token-registry.ts
-│   └── defi-registry.ts
-└── tools/                # MCP tool implementations
-    ├── balance.ts
-    ├── tokens.ts
-    ├── transactions.ts
-    ├── price.ts
-    └── protocol.ts
-```
+**Completed:**
+- Core infrastructure (TypeScript, MCP SDK, API clients)
+- Security hardening (input validation, error sanitization, Authorization headers)
+- 6 tools operational: wallet balance, token holdings, transactions, pricing, protocol metrics
+- Professional documentation
+
+**In Progress:**
+- Tool 7: DeFi position analyzer with 3-bucket classification
+- Tool 8: Telegram alert integration
+- Archestra platform deployment
 
 ## Development
 
