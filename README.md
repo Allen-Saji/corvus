@@ -73,23 +73,27 @@ The platform handles security, hosting, and observability while Corvus focuses p
 
 **get_top_solana_protocols** - Get top protocols ranked by TVL with optional category filtering
 
-### In Development
+### Advanced Analytics
 
-**analyze_wallet_defi_positions** - Comprehensive DeFi position analysis with 3-bucket classification (Known / Likely DeFi / Unclassified)
+**analyze_wallet_defi_positions** - Comprehensive DeFi position analysis with 3-bucket classification (Known / Likely DeFi / Unclassified). Includes dust filtering, heuristic scoring, and honest limitation reporting.
 
-**send_telegram_alert** - Send formatted alerts to Telegram with markdown support
+**send_telegram_alert** - Send formatted alerts to Telegram with markdown support and severity levels (info, warning, critical)
 
 ## Progress
 
 **Completed:**
 - Core infrastructure (TypeScript, MCP SDK, API clients)
 - Security hardening (input validation, error sanitization, Authorization headers)
-- 6 tools operational: wallet balance, token holdings, transactions, pricing, protocol metrics
+- All 8 tools operational and tested:
+  - Wallet intelligence (balance, tokens, transactions)
+  - Market data (pricing, protocol metrics)
+  - Advanced analytics (DeFi position analysis, Telegram alerts)
+- Professional documentation
 
-**In Progress:**
-- Tool 7: DeFi position analyzer with 3-bucket classification
-- Tool 8: Telegram alert integration
+**Next Steps:**
 - Archestra platform deployment
+- Agent system prompt configuration
+- Production testing and demo
 
 ## Development
 
