@@ -13,6 +13,8 @@ import { getTokenBalancesTool } from "./tools/tokens.js";
 import { getTokenPriceTool } from "./tools/price.js";
 import { getRecentTransactionsTool } from "./tools/transactions.js";
 import { getProtocolTVLTool, getTopProtocolsTool } from "./tools/protocol.js";
+import { analyzeWalletDeFiPositionsTool } from "./tools/defi-positions.js";
+import { sendTelegramAlertTool } from "./tools/telegram.js";
 
 /**
  * Corvus MCP Server
@@ -135,6 +137,46 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: "analyze_wallet_defi_positions",
+        description:
+          "Analyze a Solana wallet's DeFi positions in depth. Identifies staking positions, lending deposits, LP tokens, and idle assets. Categorizes each position by protocol and type, calculates USD values, and flags tokens it cannot classify. This is the most comprehensive wallet analysis tool - use it when the user wants to understand their DeFi exposure, portfolio breakdown, or position details.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            wallet: {
+              type: "string",
+              description: "Base58 Solana wallet address (32-44 characters)",
+            },
+          },
+          required: ["wallet"],
+        },
+      },
+      {
+        name: "send_telegram_alert",
+        description:
+          "Send a formatted message to a Telegram chat. Use this when the user explicitly asks to send information to Telegram, get an alert, or be notified. Requires the user's Telegram chat ID.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            chat_id: {
+              type: "string",
+              description: "Telegram chat ID (numeric ID or @username)",
+            },
+            message: {
+              type: "string",
+              description: "Message content (supports Markdown formatting)",
+            },
+            severity: {
+              type: "string",
+              enum: ["info", "warning", "critical"],
+              description:
+                "Message severity level - affects emoji prefix (default: info)",
+            },
+          },
+          required: ["chat_id", "message"],
+        },
+      },
     ],
   };
 });
@@ -192,6 +234,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const limit = args?.limit ? Number(args.limit) : undefined;
         const category = args?.category ? String(args.category) : undefined;
         const result = await getTopProtocolsTool(limit, category);
+        return {
+          content: [{ type: "text", text: result }],
+        };
+      }
+
+      case "analyze_wallet_defi_positions": {
+        const wallet = String(args?.wallet || "");
+        const result = await analyzeWalletDeFiPositionsTool(wallet);
+        return {
+          content: [{ type: "text", text: result }],
+        };
+      }
+
+      case "send_telegram_alert": {
+        const chat_id = String(args?.chat_id || "");
+        const message = String(args?.message || "");
+        const severity = (args?.severity as "info" | "warning" | "critical") || "info";
+        const result = await sendTelegramAlertTool(chat_id, message, severity);
         return {
           content: [{ type: "text", text: result }],
         };
