@@ -85,7 +85,6 @@ The platform handles security, hosting, and observability while Corvus focuses p
 - Core infrastructure (TypeScript, MCP SDK, API clients)
 - Security hardening (input validation, error sanitization, Authorization headers)
 - 6 tools operational: wallet balance, token holdings, transactions, pricing, protocol metrics
-- Professional documentation
 
 **In Progress:**
 - Tool 7: DeFi position analyzer with 3-bucket classification
