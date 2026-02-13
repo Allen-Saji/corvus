@@ -6,19 +6,19 @@ Natural language interface for querying wallets, DeFi positions, protocol metric
 
 ---
 
-## ✨ Features
+## Features
 
-### 🔍 Wallet Intelligence
+### Wallet Intelligence
 - **SOL Balance**: Get native SOL balance with real-time USD valuation
 - **Token Holdings**: Complete SPL token portfolio with prices and values
 - **Transaction History**: Human-readable transaction descriptions (powered by Helius Enhanced Transactions)
 
-### 📊 DeFi Market Data
+### DeFi Market Data
 - **Token Pricing**: Batch price lookups for up to 50 tokens (symbols or mint addresses)
 - **Protocol TVL**: Detailed Total Value Locked metrics for 358+ Solana protocols
 - **Protocol Rankings**: Top protocols by TVL with category filtering
 
-### 🌟 Advanced Analytics (The Differentiator)
+### Advanced Analytics (The Differentiator)
 - **DeFi Position Analysis**: Intelligent 3-bucket classification system
   - **Known DeFi**: Registry-based identification (jupSOL, mSOL, JLP, etc.)
   - **Likely DeFi**: Heuristic detection (LP tokens, vault tokens, protocol patterns)
@@ -28,7 +28,7 @@ Natural language interface for querying wallets, DeFi positions, protocol metric
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 18+
@@ -56,7 +56,37 @@ npm run build
 npm start
 ```
 
-### Using with Claude Desktop
+### Archestra Platform Deployment (Recommended)
+
+1. Navigate to **MCP Registry** in Archestra UI
+2. Click **"Self-hosted (orchestrated by Archestra in K8s)"**
+3. Fill in the form:
+   - **Name**: `Corvus`
+   - **Command**: `node`
+   - **Docker Image**: `corvus-mcp:latest`
+   - **Arguments**: `dist/index.js`
+   - **Environment Variables**:
+     - `HELIUS_API_KEY`: Your Helius API key
+     - `TELEGRAM_BOT_TOKEN`: Your Telegram bot token (optional)
+4. Click **"Add Server"**
+5. Assign to an Agent and test via Chat UI
+
+### Docker Deployment
+
+```bash
+# Build Docker image
+docker build -t corvus-mcp:latest .
+
+# Run with environment variables
+docker run -d \
+  -e HELIUS_API_KEY=your-key \
+  -e TELEGRAM_BOT_TOKEN=your-token \
+  corvus-mcp:latest
+```
+
+### Claude Desktop Integration
+
+**Note:** This configuration follows standard MCP server patterns but has not been tested with Claude Desktop.
 
 Add to your `claude_desktop_config.json`:
 
@@ -75,37 +105,9 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-### Docker Deployment
-
-```bash
-# Build Docker image
-docker build -t corvus-mcp:latest .
-
-# Run with environment variables
-docker run -d \
-  -e HELIUS_API_KEY=your-key \
-  -e TELEGRAM_BOT_TOKEN=your-token \
-  corvus-mcp:latest
-```
-
-### Archestra Platform Deployment
-
-1. Navigate to **MCP Registry** in Archestra UI
-2. Click **"Self-hosted (orchestrated by Archestra in K8s)"**
-3. Fill in the form:
-   - **Name**: `Corvus`
-   - **Command**: `node`
-   - **Docker Image**: `corvus-mcp:latest`
-   - **Arguments**: `dist/index.js`
-   - **Environment Variables**:
-     - `HELIUS_API_KEY`: Your Helius API key
-     - `TELEGRAM_BOT_TOKEN`: Your Telegram bot token (optional)
-4. Click **"Add Server"**
-5. Assign to an Agent and test via Chat UI
-
 ---
 
-## 🛠️ Available Tools
+## Available Tools
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
@@ -120,7 +122,7 @@ docker run -d \
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 Three-layer design with deterministic tool execution:
 
@@ -145,7 +147,7 @@ Three-layer design with deterministic tool execution:
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Comprehensive test suite with **210 passing tests** (~6 seconds execution):
 
@@ -161,14 +163,14 @@ npm run test:watch
 ```
 
 **Test Coverage:**
-- ✅ Input validation (11 tests)
-- ✅ DeFi classifier (10 tests)
-- ✅ Token registry (7 tests)
-- ✅ Helius API client (24 tests)
-- ✅ DeFiLlama API client (24 tests)
-- ✅ Tool implementations (113 tests)
-- ✅ MCP server integration (12 tests)
-- ✅ Integration tests (9 tests)
+- Input validation (11 tests)
+- DeFi classifier (10 tests)
+- Token registry (7 tests)
+- Helius API client (24 tests)
+- DeFiLlama API client (24 tests)
+- Tool implementations (113 tests)
+- MCP server integration (12 tests)
+- Integration tests (9 tests)
 
 All tests are mock-based (no external API dependencies) for fast, deterministic execution.
 
@@ -176,7 +178,7 @@ See [TEST-SUMMARY.md](./TEST-SUMMARY.md) for detailed breakdown.
 
 ---
 
-## 📖 Example Usage
+## Example Usage
 
 ### Get Wallet Balance
 ```
@@ -221,7 +223,7 @@ Response:
 
 ---
 
-## 🔒 Security
+## Security
 
 - **API Key Management**: Environment variables, never hardcoded
 - **Input Validation**: Solana SDK PublicKey validation for wallet addresses
@@ -234,7 +236,7 @@ See [SECURITY-AUDIT.md](./SECURITY-AUDIT.md) for detailed security measures.
 
 ---
 
-## 📊 Data Sources
+## Data Sources
 
 | Source | Purpose | API Key Required | Rate Limits |
 |--------|---------|------------------|-------------|
@@ -243,17 +245,17 @@ See [SECURITY-AUDIT.md](./SECURITY-AUDIT.md) for detailed security measures.
 
 ---
 
-## 🎯 The Differentiator: 3-Bucket Classification
+## The Differentiator: 3-Bucket Classification
 
 Corvus uses a unique **dual-strategy approach** to identify DeFi positions:
 
-### 1️⃣ Known DeFi (Registry-Based)
+### 1. Known DeFi (Registry-Based)
 Hardcoded registry of verified receipt tokens:
 - **Liquid Staking**: jupSOL, mSOL, bSOL, stSOL
 - **Governance**: JUP, JTO, MNDE, RAY, ORCA
 - **LP Tokens**: JLP, USDC-USDT-LP
 
-### 2️⃣ Likely DeFi (Heuristic-Based)
+### 2. Likely DeFi (Heuristic-Based)
 Pattern detection for unknown tokens:
 - **LP Tokens**: Contains "LP" or hyphen (SOL-USDC)
 - **Vault Tokens**: k-prefix (kUSDC = Kamino vault)
@@ -262,14 +264,14 @@ Pattern detection for unknown tokens:
 
 Requires **2+ signals** to classify as "Likely DeFi"
 
-### 3️⃣ Unclassified
+### 3. Unclassified
 Everything else (regular tokens, base assets, stablecoins)
 
 **Why This Matters:** Users can instantly see their staking positions, lending deposits, and LP tokens across all protocols without manual tracking.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Here's how to help:
 
@@ -307,13 +309,13 @@ Edit `src/data/defi-registry.ts`:
 
 ---
 
-## 📝 License
+## License
 
 MIT License - see [LICENSE](./LICENSE) for details
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Built with:
 - [Helius](https://helius.dev) - Solana blockchain infrastructure
@@ -323,7 +325,7 @@ Built with:
 
 ---
 
-## 📬 Contact
+## Contact
 
 - **GitHub**: [@Allen-Saji](https://github.com/Allen-Saji)
 - **Repository**: [corvus](https://github.com/Allen-Saji/corvus)
