@@ -1,0 +1,44 @@
+# Source files (only ship compiled dist/)
+src/
+tests/
+*.test.ts
+*.spec.ts
+
+# Development files
+.github/
+.vscode/
+.idea/
+.claude/
+archive/
+scripts/
+assets/
+
+# Documentation (keep essential docs only)
+docs/SETUP_WIZARD_PLAN.md
+docs/SECURITY-AUDIT.md
+
+# Config files
+tsconfig.json
+vitest.config.ts
+.env
+.env.example
+
+# Development scripts
+test-*.ts
+debug-*.ts
+*.mjs
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+
+# Other
+Dockerfile
+archestra/
+*.log
+coverage/
+.DS_Store

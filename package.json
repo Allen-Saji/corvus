@@ -1,15 +1,40 @@
 {
-  "name": "corvus",
+  "name": "corvus-solana-cli",
   "version": "1.0.0",
-  "description": "Solana DeFi Intelligence via MCP — built on Archestra",
+  "description": "Solana DeFi Intelligence CLI & MCP Server - Wallet analysis, token prices, protocol TVL, and AI-powered insights",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "docs/INSTALLATION.md",
+    "docs/CUSTOM_MODELS.md",
+    "docs/PRICING_SOURCES.md",
+    "docs/SECURITY_AUDIT_REPORT.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
+    "cli": "node dist/cli.js",
+    "dev:cli": "tsx src/cli.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui"
+  },
+  "bin": {
+    "corvus": "./dist/cli.js"
   },
   "keywords": [
     "solana",
@@ -23,12 +48,26 @@
   ],
   "author": "Allen Saji <allensaji04@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/allensaji/corvus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/allensaji/corvus/issues"
+  },
+  "homepage": "https://github.com/allensaji/corvus#readme",
   "type": "commonjs",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.74.0",
+    "@google/generative-ai": "^0.1.3",
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@solana/web3.js": "^1.98.4",
-    "dotenv": "^17.2.4",
-    "node-fetch": "^3.3.2"
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^11.1.0",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.77.0"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",
