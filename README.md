@@ -1,160 +1,334 @@
-<div align="center">
-  <img src="assets/corvus-logo.png" alt="Corvus Logo" width="200"/>
-  <h1>Corvus</h1>
-  <p>Solana DeFi intelligence via Model Context Protocol</p>
-  <p>Natural language interface for querying wallets, DeFi positions, protocol metrics, and token prices on Solana</p>
-</div>
+# Corvus
+
+**Solana DeFi Intelligence MCP Server**
+
+Natural language interface for querying wallets, DeFi positions, protocol metrics, and token prices on Solana blockchain.
 
 ---
 
-## Quick Start
+## ✨ Features
+
+### 🔍 Wallet Intelligence
+- **SOL Balance**: Get native SOL balance with real-time USD valuation
+- **Token Holdings**: Complete SPL token portfolio with prices and values
+- **Transaction History**: Human-readable transaction descriptions (powered by Helius Enhanced Transactions)
+
+### 📊 DeFi Market Data
+- **Token Pricing**: Batch price lookups for up to 50 tokens (symbols or mint addresses)
+- **Protocol TVL**: Detailed Total Value Locked metrics for 358+ Solana protocols
+- **Protocol Rankings**: Top protocols by TVL with category filtering
+
+### 🌟 Advanced Analytics (The Differentiator)
+- **DeFi Position Analysis**: Intelligent 3-bucket classification system
+  - **Known DeFi**: Registry-based identification (jupSOL, mSOL, JLP, etc.)
+  - **Likely DeFi**: Heuristic detection (LP tokens, vault tokens, protocol patterns)
+  - **Unclassified**: Regular tokens and assets
+- **Dust Filtering**: Automatically filters tokens < $1 USD or < 0.01 balance
+- **Telegram Alerts**: Send formatted notifications with severity levels
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- Helius API key (free at https://dashboard.helius.dev)
+- [Helius API key](https://dashboard.helius.dev) (free tier: 100k credits/day)
+- Optional: Telegram Bot Token (for alerts)
 
 ### Installation
 
 ```bash
+# Clone repository
 git clone https://github.com/Allen-Saji/corvus.git
 cd corvus
+
+# Install dependencies
 npm install
 
 # Configure environment
 cp .env.example .env
-# Add your HELIUS_API_KEY to .env
+# Edit .env and add your HELIUS_API_KEY
 
-# Build and run
+# Build
 npm run build
+
+# Run
 npm start
 ```
 
-## Architecture
+### Using with Claude Desktop
 
-Three-layer architecture with deterministic tool execution:
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "corvus": {
+      "command": "node",
+      "args": ["/path/to/corvus/dist/index.js"],
+      "env": {
+        "HELIUS_API_KEY": "your-helius-api-key",
+        "TELEGRAM_BOT_TOKEN": "your-telegram-token"
+      }
+    }
+  }
+}
+```
+
+### Docker Deployment
+
+```bash
+# Build Docker image
+docker build -t corvus-mcp:latest .
+
+# Run with environment variables
+docker run -d \
+  -e HELIUS_API_KEY=your-key \
+  -e TELEGRAM_BOT_TOKEN=your-token \
+  corvus-mcp:latest
+```
+
+### Archestra Platform Deployment
+
+1. Navigate to **MCP Registry** in Archestra UI
+2. Click **"Self-hosted (orchestrated by Archestra in K8s)"**
+3. Fill in the form:
+   - **Name**: `Corvus`
+   - **Command**: `node`
+   - **Docker Image**: `corvus-mcp:latest`
+   - **Arguments**: `dist/index.js`
+   - **Environment Variables**:
+     - `HELIUS_API_KEY`: Your Helius API key
+     - `TELEGRAM_BOT_TOKEN`: Your Telegram bot token (optional)
+4. Click **"Add Server"**
+5. Assign to an Agent and test via Chat UI
+
+---
+
+## 🛠️ Available Tools
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `get_sol_balance` | Get SOL balance with USD value | `wallet` (required) |
+| `get_token_balances` | Get all SPL token holdings | `wallet` (required) |
+| `get_recent_transactions` | Get transaction history | `wallet` (required), `limit` (default: 10, max: 50) |
+| `get_token_price` | Get token prices | `tokens` (comma-separated, max: 50) |
+| `get_protocol_tvl` | Get protocol TVL metrics | `protocol` (name or slug) |
+| `get_top_solana_protocols` | Get top protocols by TVL | `limit` (default: 10, max: 50), `category` (optional) |
+| `analyze_wallet_defi_positions` | Analyze DeFi positions | `wallet` (required) |
+| `send_telegram_alert` | Send Telegram notification | `chat_id`, `message`, `severity` (info/warning/critical) |
+
+---
+
+## 🏗️ Architecture
+
+Three-layer design with deterministic tool execution:
 
 ```
-Tools (MCP interface)
-  ↓
-Libraries (API clients & validation)
-  ↓
-Data (Static registries)
+┌─────────────────────────────────┐
+│   Tools (MCP Interface)         │  8 production-ready tools
+│   src/tools/*.ts                │  Input validation, response formatting
+└─────────────┬───────────────────┘
+              │
+┌─────────────▼───────────────────┐
+│   Libraries (API Clients)       │  Helius, DeFiLlama clients
+│   src/lib/*.ts                  │  Error handling, retries, sanitization
+└─────────────┬───────────────────┘
+              │
+┌─────────────▼───────────────────┐
+│   Data (Static Registries)      │  Known DeFi tokens, token symbols
+│   src/data/*.ts                 │  Registry-based classification
+└─────────────────────────────────┘
 ```
 
 **Design Principle:** All data fetching, validation, formatting, and error handling happens inside the tools. The LLM only selects which tool to use.
 
-## Archestra Integration
+---
 
-Corvus is designed to run on Archestra's MCP platform, which provides:
+## 🧪 Testing
 
-- **Chat UI** - ChatGPT-like interface with zero frontend work
-- **Dual LLM Security** - Isolates tool responses to prevent prompt injection from on-chain data
-- **MCP Gateway** - Exposes the agent as an API endpoint for external integrations
-- **Observability** - Full traces of every tool call with token usage and latency metrics
-- **Cost Controls** - Per-agent token limits and automatic model switching
-
-The platform handles security, hosting, and observability while Corvus focuses purely on Solana data intelligence.
-
-## Available Tools
-
-### Wallet Intelligence
-
-**get_sol_balance** - Get SOL balance and current USD value for any wallet
-
-**get_token_balances** - Get all SPL token holdings with balances, prices, and USD values
-
-**get_recent_transactions** - Get transaction history with human-readable descriptions (up to 50 transactions)
-
-### DeFi Market Data
-
-**get_token_price** - Get current prices for Solana tokens by symbol or mint address (batch support up to 50 tokens)
-
-**get_protocol_tvl** - Get detailed TVL and metrics for specific DeFi protocols with fuzzy name matching
-
-**get_top_solana_protocols** - Get top protocols ranked by TVL with optional category filtering
-
-### Advanced Analytics
-
-**analyze_wallet_defi_positions** - Comprehensive DeFi position analysis with 3-bucket classification (Known / Likely DeFi / Unclassified). Includes dust filtering, heuristic scoring, and honest limitation reporting.
-
-**send_telegram_alert** - Send formatted alerts to Telegram with markdown support and severity levels (info, warning, critical)
-
-## Progress
-
-**Completed:**
-- Core infrastructure (TypeScript, MCP SDK, API clients)
-- Security hardening (input validation, error sanitization, Authorization headers)
-- All 8 tools operational and tested:
-  - Wallet intelligence (balance, tokens, transactions)
-  - Market data (pricing, protocol metrics)
-  - Advanced analytics (DeFi position analysis, Telegram alerts)
-- Professional documentation
-
-**Next Steps:**
-- Archestra platform deployment
-- Agent system prompt configuration
-- Production testing and demo
-
-## Development
+Comprehensive test suite with **210 passing tests** (~6 seconds execution):
 
 ```bash
-npm run build    # Compile TypeScript
-npm run dev      # Development mode with tsx
-npm start        # Production mode
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run in watch mode
+npm run test:watch
 ```
 
-### Adding a New Tool
+**Test Coverage:**
+- ✅ Input validation (11 tests)
+- ✅ DeFi classifier (10 tests)
+- ✅ Token registry (7 tests)
+- ✅ Helius API client (24 tests)
+- ✅ DeFiLlama API client (24 tests)
+- ✅ Tool implementations (113 tests)
+- ✅ MCP server integration (12 tests)
+- ✅ Integration tests (9 tests)
 
-1. Create tool file in `src/tools/`
-2. Implement with input validation, API calls via `lib/` clients, and structured response
-3. Register in `src/index.ts` (ListToolsRequestSchema and CallToolRequestSchema handlers)
-4. Build and test
+All tests are mock-based (no external API dependencies) for fast, deterministic execution.
+
+See [TEST-SUMMARY.md](./TEST-SUMMARY.md) for detailed breakdown.
+
+---
+
+## 📖 Example Usage
+
+### Get Wallet Balance
+```
+User: "Get the SOL balance for wallet 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"
+
+Response:
+{
+  "balance_sol": 5.5,
+  "balance_usd": 550.00,
+  "price_per_sol": 100.00
+}
+```
+
+### Analyze DeFi Positions
+```
+User: "Analyze DeFi positions in wallet 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"
+
+Response:
+Known DeFi Positions:
+  - jupSOL: 2.5 tokens ($250 USD) - Jito Liquid Staking
+  - mSOL: 1.0 tokens ($100 USD) - Marinade Staking
+
+Likely DeFi Positions:
+  - SOL-USDC-LP: 0.5 tokens ($50 USD) - LP token detected
+
+Summary:
+  - Total DeFi Value: $400 USD
+  - Protocols: Jito, Marinade, Unknown DEX
+```
+
+### Get Protocol Rankings
+```
+User: "What are the top 5 Solana DeFi protocols by TVL?"
+
+Response:
+1. Kamino Lend - $1.65B (Lending)
+2. Jito - $1.07B (Liquid Staking)
+3. Marinade - $850M (Liquid Staking)
+4. Jupiter - $600M (DEX)
+5. Drift - $400M (Perpetuals)
+```
+
+---
+
+## 🔒 Security
+
+- **API Key Management**: Environment variables, never hardcoded
+- **Input Validation**: Solana SDK PublicKey validation for wallet addresses
+- **Error Sanitization**: Generic error messages, no internal details leaked
+- **Request Timeouts**: 5-second default with AbortController
+- **Rate Limiting**: Built-in limits (50 tokens max for pricing, 50 transactions max)
+- **Authorization Headers**: Proper API authentication
+
+See [SECURITY-AUDIT.md](./SECURITY-AUDIT.md) for detailed security measures.
+
+---
+
+## 📊 Data Sources
+
+| Source | Purpose | API Key Required | Rate Limits |
+|--------|---------|------------------|-------------|
+| **Helius** | Blockchain data (balances, transactions) | Yes (free tier) | 100k credits/day |
+| **DeFiLlama** | Protocol TVL, token prices | No | Public API |
+
+---
+
+## 🎯 The Differentiator: 3-Bucket Classification
+
+Corvus uses a unique **dual-strategy approach** to identify DeFi positions:
+
+### 1️⃣ Known DeFi (Registry-Based)
+Hardcoded registry of verified receipt tokens:
+- **Liquid Staking**: jupSOL, mSOL, bSOL, stSOL
+- **Governance**: JUP, JTO, MNDE, RAY, ORCA
+- **LP Tokens**: JLP, USDC-USDT-LP
+
+### 2️⃣ Likely DeFi (Heuristic-Based)
+Pattern detection for unknown tokens:
+- **LP Tokens**: Contains "LP" or hyphen (SOL-USDC)
+- **Vault Tokens**: k-prefix (kUSDC = Kamino vault)
+- **Protocol Names**: Contains known protocol names
+- **No Market Price**: Receipt tokens typically not traded
+
+Requires **2+ signals** to classify as "Likely DeFi"
+
+### 3️⃣ Unclassified
+Everything else (regular tokens, base assets, stablecoins)
+
+**Why This Matters:** Users can instantly see their staking positions, lending deposits, and LP tokens across all protocols without manual tracking.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how to help:
+
+### Adding DeFi Tokens to Registry
+
+Edit `src/data/defi-registry.ts`:
+
+```typescript
+{
+  mint: "token-mint-address",
+  symbol: "TOKEN",
+  name: "Token Name",
+  protocol: "Protocol Name",
+  category: "Liquid Staking" | "Governance" | "LP Token",
+  underlying_asset: "SOL", // optional
+  description: "Brief description"
+}
+```
+
+### Adding New Tools
+
+1. Create `src/tools/your-tool.ts`
+2. Implement with validation, API calls, structured response
+3. Register in `src/index.ts` (ListTools and CallTool handlers)
+4. Add tests in `tests/unit/tools/your-tool.test.ts`
+5. Run `npm test` to verify
 
 ### Code Standards
 
 - TypeScript strict mode
-- All responses include `_meta` field with data source and timestamp
+- All responses include `_meta` field (data source, timestamp)
 - Input validation before API calls
-- 5-second default timeout on external calls
-- Graceful error handling
+- Error handling with sanitized messages
+- Mock-based unit tests (no real API calls)
 
-## Security
+---
 
-- API keys via environment variables
-- Input validation using Solana SDK PublicKey
-- Authorization headers for API authentication
-- Error message sanitization
-- Request timeouts with AbortController
-- Input length limits (50 token max for pricing, 100 token max for wallet scans)
+## 📝 License
 
-## Data Sources
+MIT License - see [LICENSE](./LICENSE) for details
 
-**DefiLlama** (Free, no API key)
-- Protocols API: 7,059 protocols, 358 on Solana
-- Coins API: Token pricing with confidence scores
+---
 
-**Helius** (Free tier, API key required)
-- RPC: Solana getBalance
-- DAS API: Token balance scanning
-- Enhanced Transactions: Human-readable transaction history
-- Free tier: 100,000 credits/day
+## 🙏 Acknowledgments
 
-## Known Limitations
-
-- NFT-based positions (Orca Whirlpool) not detected
-- Program account positions (Drift, Zeta margin) not visible
-- Current prices only, not historical values
-- Receipt tokens (Kamino kTokens, LP tokens) have no market price
-- New or low-liquidity tokens may not be tracked by DefiLlama
-
-These limitations are communicated in tool responses.
-
-## License
-
-MIT
-
-## Built With
-
-- [Helius](https://helius.dev) - Solana infrastructure
-- [DefiLlama](https://defillama.com) - DeFi metrics
+Built with:
+- [Helius](https://helius.dev) - Solana blockchain infrastructure
+- [DeFiLlama](https://defillama.com) - DeFi protocol metrics
 - [Model Context Protocol](https://modelcontextprotocol.io) - AI-application integration standard
+- [Archestra](https://archestra.ai) - MCP orchestration platform
+
+---
+
+## 📬 Contact
+
+- **GitHub**: [@Allen-Saji](https://github.com/Allen-Saji)
+- **Repository**: [corvus](https://github.com/Allen-Saji/corvus)
+- **Issues**: [Report a bug](https://github.com/Allen-Saji/corvus/issues)
+
+---
+
+**Built for the [2 Fast 2 MCP](https://www.wemakedevs.org/hackathons/2fast2mcp) Hackathon**
