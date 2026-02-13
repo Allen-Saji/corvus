@@ -6,6 +6,29 @@ Natural language interface for querying wallets, DeFi positions, protocol metric
 
 ---
 
+## Table of Contents
+
+- [Features](#features)
+- [Quick Start](#quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Archestra Platform Deployment (Recommended)](#archestra-platform-deployment-recommended)
+  - [Docker Deployment](#docker-deployment)
+  - [Claude Desktop Integration](#claude-desktop-integration)
+- [Available Tools](#available-tools)
+- [Architecture](#architecture)
+- [Testing](#testing)
+- [Example Usage](#example-usage)
+- [Security](#security)
+- [Data Sources](#data-sources)
+- [The Differentiator: 3-Bucket Classification](#the-differentiator-3-bucket-classification)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Contact](#contact)
+
+---
+
 ## Features
 
 ### Wallet Intelligence
@@ -174,8 +197,6 @@ npm run test:watch
 
 All tests are mock-based (no external API dependencies) for fast, deterministic execution.
 
-See [TEST-SUMMARY.md](./TEST-SUMMARY.md) for detailed breakdown.
-
 ---
 
 ## Example Usage
@@ -231,8 +252,6 @@ Response:
 - **Request Timeouts**: 5-second default with AbortController
 - **Rate Limiting**: Built-in limits (50 tokens max for pricing, 50 transactions max)
 - **Authorization Headers**: Proper API authentication
-
-See [SECURITY-AUDIT.md](./SECURITY-AUDIT.md) for detailed security measures.
 
 ---
 
