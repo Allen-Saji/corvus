@@ -1,0 +1,33 @@
+{
+  "name": "corvus-workspace",
+  "version": "1.0.0",
+  "description": "Archestra workspace for Corvus Solana DeFi Intelligence MCP Server",
+  "servers": {
+    "corvus": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["dist/index.js"],
+      "env": {
+        "HELIUS_API_KEY": "${HELIUS_API_KEY}",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "GROQ_API_KEY": "${GROQ_API_KEY}",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY}",
+        "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
+      },
+      "metadata": {
+        "description": "Solana DeFi Intelligence - Wallet analysis, token prices, protocol TVL, and AI-powered insights",
+        "capabilities": [
+          "wallet_balance",
+          "token_holdings",
+          "token_prices",
+          "transaction_history",
+          "defi_position_analysis",
+          "protocol_tvl",
+          "telegram_alerts"
+        ],
+        "tags": ["solana", "defi", "blockchain", "wallet-analysis", "crypto"]
+      }
+    }
+  }
+}
