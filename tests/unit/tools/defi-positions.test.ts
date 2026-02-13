@@ -58,12 +58,16 @@ describe('analyzeWalletDeFiPositionsTool', () => {
     const result = await analyzeWalletDeFiPositionsTool('7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU');
     const parsed = JSON.parse(result);
 
-    expect(parsed.known_positions).toHaveLength(2);
+    // SOL is excluded as a base asset, only JitoSOL should be in known_positions
+    expect(parsed.known_positions).toHaveLength(1);
     expect(parsed.known_positions[0].confidence).toBe('high');
-    expect(parsed.known_positions[0].protocol).toBeDefined();
-    expect(parsed.known_positions[1].symbol).toBe('JitoSOL');
-    expect(parsed.known_positions[1].protocol).toBe('Jito');
-    expect(parsed.summary.known_positions_count).toBe(2);
+    expect(parsed.known_positions[0].protocol).toBe('Jito');
+    expect(parsed.known_positions[0].symbol).toBe('JitoSOL');
+    expect(parsed.summary.known_positions_count).toBe(1);
+
+    // SOL should be in unclassified as a base asset
+    expect(parsed.unclassified).toHaveLength(1);
+    expect(parsed.unclassified[0].symbol).toBe('SOL');
   });
 
   it('should classify LP tokens as likely_defi', async () => {
@@ -264,9 +268,10 @@ describe('analyzeWalletDeFiPositionsTool', () => {
     const result = await analyzeWalletDeFiPositionsTool('7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU');
     const parsed = JSON.parse(result);
 
-    expect(parsed.summary.total_known_value_usd).toBe(1000); // 10 * 100
+    // SOL is now unclassified as a base asset, not in known positions
+    expect(parsed.summary.total_known_value_usd).toBe(0);
     expect(parsed.summary.total_likely_defi_value_usd).toBe(0); // LP has no price
-    expect(parsed.summary.total_unclassified_value_usd).toBe(200); // 100 * 2
+    expect(parsed.summary.total_unclassified_value_usd).toBe(1200); // SOL: 10*100 + UNK: 100*2
     expect(parsed.summary.total_estimated_usd).toBe(1200);
   });
 
@@ -395,8 +400,9 @@ describe('analyzeWalletDeFiPositionsTool', () => {
     mockTokenBalances.mockResolvedValueOnce({
       data: [
         {
-          mint: 'So11111111111111111111111111111111111111112',
-          symbol: 'SOL',
+          mint: 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn',
+          symbol: 'JitoSOL',
+          name: 'Jito Staked SOL',
           balance: 10,
           decimals: 9,
         },
@@ -412,6 +418,7 @@ describe('analyzeWalletDeFiPositionsTool', () => {
 
     // Should still classify tokens, just without prices
     expect(parsed.known_positions).toHaveLength(1);
+    expect(parsed.known_positions[0].symbol).toBe('JitoSOL');
     expect(parsed.known_positions[0].price_usd).toBeUndefined();
     expect(parsed.known_positions[0].value_usd).toBeUndefined();
   });

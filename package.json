@@ -11,9 +11,18 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "solana",
+    "defi",
+    "blockchain",
+    "mcp",
+    "model-context-protocol",
+    "archestra",
+    "cryptocurrency",
+    "web3"
+  ],
+  "author": "Allen Saji <allensaji04@gmail.com>",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
