@@ -3,6 +3,8 @@ import { ApiCallResult, Protocol, TokenPrice } from "../types";
 
 const DEFILLAMA_API = "https://api.llama.fi";
 const DEFILLAMA_COINS_API = "https://coins.llama.fi";
+const JUPITER_PRICE_API = "https://price.jup.ag/v6";
+const PUMPFUN_API = "https://frontend-api.pump.fun";
 
 // Cache for protocol list (refreshed every 5 minutes)
 let protocolsCache: Protocol[] = [];
@@ -175,7 +177,110 @@ export async function getProtocol(
 }
 
 /**
+ * Get token prices from Pump.fun (for bonding curve tokens)
+ * Only works for tokens still on Pump.fun bonding curve (not graduated)
+ */
+async function getPumpFunPrices(
+  mints: string[]
+): Promise<Record<string, TokenPrice>> {
+  if (mints.length === 0) {
+    return {};
+  }
+
+  const prices: Record<string, TokenPrice> = {};
+
+  // Pump.fun API doesn't support batch requests, so we query individually
+  // Only query first 10 to avoid rate limits
+  const mintsToCheck = mints.slice(0, 10);
+
+  for (const mint of mintsToCheck) {
+    try {
+      const url = `${PUMPFUN_API}/coins/${mint}`;
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(3000),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) {
+        continue; // Skip this token
+      }
+
+      const data: any = await response.json();
+
+      // Pump.fun returns market_cap and sometimes price in USD
+      if (data && (data.usd_market_cap || data.price_usd)) {
+        prices[mint] = {
+          mint,
+          symbol: data.symbol || "UNKNOWN",
+          price: data.price_usd || (data.usd_market_cap / (data.total_supply || 1)),
+          decimals: 6, // Pump.fun tokens are typically 6 decimals
+          confidence: 0.85, // Bonding curve prices are reliable but slightly lower confidence
+          timestamp: Date.now() / 1000,
+        };
+      }
+    } catch (error) {
+      // Silently skip failed tokens
+      continue;
+    }
+  }
+
+  return prices;
+}
+
+/**
+ * Get token prices from Jupiter (fallback for DEX tokens)
+ * Jupiter aggregates from ALL Solana DEXes (Raydium, Orca, Pump.fun graduated, etc.)
+ */
+async function getJupiterPrices(
+  mints: string[]
+): Promise<Record<string, TokenPrice>> {
+  if (mints.length === 0) {
+    return {};
+  }
+
+  try {
+    const ids = mints.join(",");
+    const url = `${JUPITER_PRICE_API}/price?ids=${ids}`;
+
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(5000)
+    });
+
+    if (!response.ok) {
+      return {};
+    }
+
+    const data: any = await response.json();
+
+    if (!data.data) {
+      return {};
+    }
+
+    const prices: Record<string, TokenPrice> = {};
+
+    for (const [mint, priceData] of Object.entries(data.data)) {
+      const jupData: any = priceData;
+
+      prices[mint] = {
+        mint,
+        symbol: jupData.mintSymbol || "UNKNOWN",
+        price: jupData.price,
+        decimals: 0,
+        confidence: 0.9, // Jupiter is reliable for DEX prices
+        timestamp: Date.now() / 1000,
+      };
+    }
+
+    return prices;
+  } catch (error) {
+    // Silently fail - this is a fallback source
+    return {};
+  }
+}
+
+/**
  * Get token prices by mint addresses
+ * Uses DefiLlama first, then Jupiter as fallback for DEX tokens
  */
 export async function getTokenPrices(
   mints: string[]
@@ -184,7 +289,8 @@ export async function getTokenPrices(
     return { data: {} };
   }
 
-  return safeApiCall(async (signal) => {
+  // Step 1: Try DefiLlama first
+  const defiLlamaResult = await safeApiCall(async (signal) => {
     const coins = mints.map((mint) => `solana:${mint}`).join(",");
     const url = `${DEFILLAMA_COINS_API}/prices/current/${coins}`;
 
@@ -218,4 +324,55 @@ export async function getTokenPrices(
 
     return prices;
   }, "DefiLlama Coins API");
+
+  // Step 2: If DefiLlama failed entirely, return error
+  if (defiLlamaResult.error) {
+    return defiLlamaResult;
+  }
+
+  const prices = defiLlamaResult.data!;
+
+  // Step 3: Find mints without prices
+  const missingMints = mints.filter(mint => !prices[mint]);
+
+  // Step 4: Try Jupiter for missing tokens (graduated Pump.fun, DEX tokens, etc.)
+  let jupiterCount = 0;
+  if (missingMints.length > 0) {
+    const jupiterPrices = await getJupiterPrices(missingMints);
+
+    // Merge Jupiter prices into results
+    for (const [mint, price] of Object.entries(jupiterPrices)) {
+      prices[mint] = price;
+      jupiterCount++;
+    }
+  }
+
+  // Step 5: Find still-missing mints after Jupiter
+  const stillMissing = mints.filter(mint => !prices[mint]);
+
+  // Step 6: Try Pump.fun API for bonding curve tokens
+  let pumpfunCount = 0;
+  if (stillMissing.length > 0) {
+    const pumpfunPrices = await getPumpFunPrices(stillMissing);
+
+    // Merge Pump.fun prices into results
+    for (const [mint, price] of Object.entries(pumpfunPrices)) {
+      prices[mint] = price;
+      pumpfunCount++;
+    }
+  }
+
+  // Add metadata about sources (for debugging/transparency)
+  const result: any = { data: prices };
+  if (jupiterCount > 0 || pumpfunCount > 0) {
+    result._pricing_meta = {
+      defillama_prices: mints.length - missingMints.length,
+      jupiter_fallback_prices: jupiterCount,
+      pumpfun_bonding_curve_prices: pumpfunCount,
+      total_priced: Object.keys(prices).length,
+      note: "Using DefiLlama (major tokens) → Jupiter (DEX tokens) → Pump.fun (bonding curve) fallback"
+    };
+  }
+
+  return result;
 }
