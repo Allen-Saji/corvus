@@ -1,0 +1,484 @@
+---
+import '../styles/global.css';
+
+const title = 'Corvus | Solana DeFi Intelligence MCP Server';
+const description = 'MCP Server for AI assistants to analyze Solana wallets, DeFi positions, and blockchain data through natural language';
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>{title}</title>
+  </head>
+  <body class="scanline">
+    <!-- Animated background grid -->
+    <div class="fixed inset-0 grid-pattern opacity-30 pointer-events-none -z-10"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 backdrop-blur-md bg-primary/80 border-b border-green/20">
+      <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <span class="text-2xl font-bold gradient-text">CORVUS</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/Allen-Saji/corvus" target="_blank" rel="noopener noreferrer"
+             class="text-secondary hover:text-green transition-colors duration-300">
+            GitHub
+          </a>
+          <a href="#setup"
+             class="px-6 py-2 rounded-lg font-semibold hover:glow-green transition-all duration-300"
+             style="background: linear-gradient(to right, var(--color-green), var(--color-cyan), var(--color-purple));">
+            Get Started
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      <!-- Gradient glow background -->
+      <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 50%, rgba(20,241,149,0.1), transparent 50%);"></div>
+
+      <div class="container mx-auto px-6 text-center z-10">
+        <h1 class="text-7xl md:text-9xl font-bold mb-6 glitch" data-text="CORVUS">
+          <span class="gradient-text">CORVUS</span>
+        </h1>
+        <p class="text-2xl md:text-4xl text-secondary mb-4">
+          Solana DeFi Intelligence
+        </p>
+        <p class="text-xl text-tertiary mb-12 max-w-3xl mx-auto">
+          MCP Server enabling AI assistants to analyze Solana wallets, DeFi positions, and blockchain data through natural language
+        </p>
+
+        <!-- Terminal demo -->
+        <div class="max-w-4xl mx-auto mb-12 bg-secondary rounded-xl border border-green/30 overflow-hidden glow-green">
+          <!-- Terminal header -->
+          <div class="bg-tertiary px-4 py-3 flex items-center gap-2 border-b border-green/30">
+            <div class="flex gap-2">
+              <div class="w-3 h-3 rounded-full bg-red-500"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <div class="text-tertiary text-sm ml-4">Claude Desktop with Corvus MCP</div>
+          </div>
+
+          <!-- Terminal content -->
+          <div class="p-6 text-left font-mono text-sm md:text-base space-y-3">
+            <div class="text-green">You:</div>
+            <div class="pl-4 text-white">
+              Analyze the DeFi positions for wallet 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU
+            </div>
+            <div class="text-cyan mt-4">Claude (using Corvus MCP):</div>
+            <div class="pl-4 space-y-2 text-secondary">
+              <div class="flex items-center gap-2">
+                <span class="text-green">🔍</span>
+                <span>Analyzing wallet...</span>
+              </div>
+              <div class="pl-6 mt-2">
+                <div class="text-white mb-2">Found 2 DeFi positions:</div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-green-400">✓</span>
+                    <span>JitoSOL: $1,065.75 (Liquid Staking)</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-green-400">✓</span>
+                    <span>mSOL: $507.50 (Marinade Staked SOL)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-3 pt-2 border-t border-green/20">
+                <span class="text-green">Total Portfolio Value:</span>
+                <span class="text-white font-bold ml-2">$1,823.25</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-6 justify-center">
+          <a href="#setup"
+             class="px-8 py-4 rounded-lg font-bold text-lg hover:scale-105 transition-transform duration-300 glow-green"
+             style="background: linear-gradient(to right, var(--color-green), var(--color-cyan), var(--color-purple));">
+            Setup with Claude
+          </a>
+          <a href="https://github.com/Allen-Saji/corvus" target="_blank" rel="noopener noreferrer"
+             class="px-8 py-4 border-2 border-green rounded-lg font-bold text-lg hover:bg-green/10 transition-all duration-300">
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- What is Corvus Section -->
+    <section class="py-24 bg-secondary/30">
+      <div class="container mx-auto px-6">
+        <h2 class="text-5xl font-bold mb-8 text-center gradient-text">What is Corvus?</h2>
+        <p class="text-xl text-secondary text-center mb-16 max-w-4xl mx-auto">
+          A Model Context Protocol (MCP) server that gives AI assistants superpowers for analyzing the Solana blockchain, DeFi protocols, and wallet activity.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-16">
+          <!-- Problem -->
+          <div class="bg-secondary border border-green/30 rounded-xl p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="text-4xl font-mono font-bold text-green">✗</span>
+              <h3 class="text-2xl font-bold text-green">The Challenge</h3>
+            </div>
+            <ul class="space-y-3 text-secondary">
+              <li class="flex items-start gap-3">
+                <span class="text-green mt-1">•</span>
+                <span>Analyzing Solana wallets requires manual blockchain data queries</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-green mt-1">•</span>
+                <span>Understanding DeFi positions needs cross-referencing multiple protocols</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-green mt-1">•</span>
+                <span>No easy way for AI assistants to interact with blockchain data</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Solution -->
+          <div class="bg-secondary border border-cyan/30 rounded-xl p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="text-4xl font-mono font-bold text-cyan">✓</span>
+              <h3 class="text-2xl font-bold text-cyan">The Solution</h3>
+            </div>
+            <ul class="space-y-3 text-secondary">
+              <li class="flex items-start gap-3">
+                <span class="text-cyan mt-1">•</span>
+                <span>Natural language queries for any Solana wallet or protocol</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-cyan mt-1">•</span>
+                <span>Automatic DeFi position analysis across 100+ protocols</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-cyan mt-1">•</span>
+                <span>Claude Desktop integration via MCP for seamless AI interaction</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div class="bg-tertiary border border-green/20 rounded-lg p-6 hover:border-green/50 transition-all duration-300">
+            <h4 class="text-xl font-bold mb-3 text-green">AI Engineers</h4>
+            <p class="text-secondary text-sm">
+              Build AI agents with blockchain superpowers. Chat with wallets, analyze DeFi, and track protocols through natural language.
+            </p>
+          </div>
+
+          <div class="bg-tertiary border border-cyan/20 rounded-lg p-6 hover:border-cyan/50 transition-all duration-300">
+            <h4 class="text-xl font-bold mb-3 text-cyan">DeFi Traders</h4>
+            <p class="text-secondary text-sm">
+              Instantly analyze wallet positions, track token movements, and monitor protocol TVL without leaving your Claude Desktop.
+            </p>
+          </div>
+
+          <div class="bg-tertiary border border-purple/20 rounded-lg p-6 hover:border-purple/50 transition-all duration-300">
+            <h4 class="text-xl font-bold mb-3 text-purple">Researchers</h4>
+            <p class="text-secondary text-sm">
+              Query blockchain data, compare protocols, and extract insights using conversational AI instead of complex APIs.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="py-24">
+      <div class="container mx-auto px-6">
+        <h2 class="text-5xl font-bold mb-16 text-center gradient-text">MCP Tools</h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <!-- Balance Tool -->
+          <div class="bg-secondary border border-green/30 rounded-lg p-6 hover:glow-green transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-green">SOL Balance</h3>
+            <p class="text-secondary text-sm">Check wallet SOL balance with real-time USD valuation</p>
+          </div>
+
+          <!-- Tokens Tool -->
+          <div class="bg-secondary border border-cyan/30 rounded-lg p-6 hover:glow-cyan transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-cyan">Token Holdings</h3>
+            <p class="text-secondary text-sm">List all token balances with metadata and USD values</p>
+          </div>
+
+          <!-- Price Tool -->
+          <div class="bg-secondary border border-purple/30 rounded-lg p-6 hover:glow-purple transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-purple">Token Prices</h3>
+            <p class="text-secondary text-sm">Real-time price data for any Solana token</p>
+          </div>
+
+          <!-- Transactions Tool -->
+          <div class="bg-secondary border border-green/30 rounded-lg p-6 hover:glow-green transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-green">Transaction History</h3>
+            <p class="text-secondary text-sm">View recent wallet transactions with full details</p>
+          </div>
+
+          <!-- DeFi Analysis Tool -->
+          <div class="bg-secondary border border-cyan/30 rounded-lg p-6 hover:glow-cyan transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-cyan">DeFi Positions</h3>
+            <p class="text-secondary text-sm">Analyze holdings across 100+ DeFi protocols automatically</p>
+          </div>
+
+          <!-- Protocol TVL Tool -->
+          <div class="bg-secondary border border-purple/30 rounded-lg p-6 hover:glow-purple transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-purple">Protocol Metrics</h3>
+            <p class="text-secondary text-sm">Query TVL and stats for any DeFi protocol</p>
+          </div>
+
+          <!-- Top Protocols Tool -->
+          <div class="bg-secondary border border-green/30 rounded-lg p-6 hover:glow-green transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-green">Protocol Rankings</h3>
+            <p class="text-secondary text-sm">Discover top Solana protocols by category and TVL</p>
+          </div>
+
+          <!-- Telegram Alerts Tool -->
+          <div class="bg-secondary border border-cyan/30 rounded-lg p-6 hover:glow-cyan transition-all duration-300">
+            <h3 class="text-xl font-bold mb-2 text-cyan">Telegram Alerts</h3>
+            <p class="text-secondary text-sm">Send notifications and alerts to Telegram</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Examples -->
+    <section class="py-24 bg-secondary/30">
+      <div class="container mx-auto px-6">
+        <h2 class="text-5xl font-bold mb-16 text-center gradient-text">See It In Action</h2>
+
+        <div class="max-w-5xl mx-auto space-y-8">
+          <!-- Example 1: Natural Language with Claude -->
+          <div class="bg-secondary border border-green/30 rounded-xl overflow-hidden">
+            <div class="bg-tertiary px-6 py-3 border-b border-green/30">
+              <h3 class="text-lg font-bold text-green">Natural Language with Claude Desktop</h3>
+            </div>
+            <div class="p-6 font-mono text-sm">
+              <div class="mb-4">
+                <div class="text-green mb-2">You:</div>
+                <div class="pl-4 text-white">
+                  "What are the top 5 Solana DeFi protocols by TVL?"
+                </div>
+              </div>
+              <div>
+                <div class="text-cyan mb-2">Claude (using Corvus):</div>
+                <div class="pl-4 text-secondary">
+                  <div class="mb-1">Analyzing Solana DeFi landscape...</div>
+                  <div class="text-white space-y-1 mt-2">
+                    <div>1. Jito: $2.1B TVL (Liquid Staking)</div>
+                    <div>2. Marinade Finance: $1.8B TVL (Liquid Staking)</div>
+                    <div>3. Kamino: $1.5B TVL (Lending)</div>
+                    <div>4. Jupiter: $950M TVL (DEX)</div>
+                    <div>5. Drift Protocol: $720M TVL (Perpetuals)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Example 2: Wallet Analysis -->
+          <div class="bg-secondary border border-cyan/30 rounded-xl overflow-hidden">
+            <div class="bg-tertiary px-6 py-3 border-b border-cyan/30">
+              <h3 class="text-lg font-bold text-cyan">Wallet Position Analysis</h3>
+            </div>
+            <div class="p-6 font-mono text-sm">
+              <div class="mb-4">
+                <div class="text-green mb-2">You:</div>
+                <div class="pl-4 text-white">
+                  "Analyze DeFi positions for 7xKXtg2CW..."
+                </div>
+              </div>
+              <div>
+                <div class="text-cyan mb-2">Claude:</div>
+                <div class="pl-4 text-secondary space-y-2">
+                  <div>✓ Found 2 liquid staking positions:</div>
+                  <div class="pl-4 space-y-1 text-white">
+                    <div>• JitoSOL: 10.5 tokens ($1,065.75)</div>
+                    <div>• mSOL: 5.0 tokens ($507.50)</div>
+                  </div>
+                  <div class="mt-2 pt-2 border-t border-cyan/20">
+                    <span class="text-cyan">Total Portfolio:</span>
+                    <span class="text-white font-bold ml-2">$1,823.25</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Setup Section -->
+    <section id="setup" class="py-24">
+      <div class="container mx-auto px-6">
+        <h2 class="text-5xl font-bold mb-8 text-center gradient-text">Setup with Claude Desktop</h2>
+        <p class="text-xl text-secondary text-center mb-16 max-w-3xl mx-auto">
+          Get Corvus running with Claude Desktop in under 2 minutes
+        </p>
+
+        <div class="max-w-4xl mx-auto space-y-8">
+          <!-- Step 1 -->
+          <div class="bg-secondary border border-green/30 rounded-xl p-8">
+            <div class="flex items-start gap-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-green/20 rounded-full flex items-center justify-center">
+                <span class="text-2xl font-bold text-green">1</span>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-2xl font-bold mb-3 text-green">Clone & Build</h3>
+                <div class="bg-tertiary rounded-lg p-4 font-mono text-sm mb-4">
+                  <div class="text-white">git clone https://github.com/Allen-Saji/corvus.git</div>
+                  <div class="text-white">cd corvus</div>
+                  <div class="text-white">npm install</div>
+                  <div class="text-white">npm run build</div>
+                </div>
+                <p class="text-secondary">Clone the repository and build the MCP server</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="bg-secondary border border-cyan/30 rounded-xl p-8">
+            <div class="flex items-start gap-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-cyan/20 rounded-full flex items-center justify-center">
+                <span class="text-2xl font-bold text-cyan">2</span>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-2xl font-bold mb-3 text-cyan">Configure API Key</h3>
+                <div class="bg-tertiary rounded-lg p-4 font-mono text-sm mb-4">
+                  <div class="text-white">echo "HELIUS_API_KEY=your_key_here" > .env</div>
+                </div>
+                <p class="text-secondary">
+                  Get a free API key from <a href="https://helius.dev" target="_blank" class="text-cyan hover:underline">Helius</a> (100k requests/day on free tier)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="bg-secondary border border-purple/30 rounded-xl p-8">
+            <div class="flex items-start gap-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-purple/20 rounded-full flex items-center justify-center">
+                <span class="text-2xl font-bold text-purple">3</span>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-2xl font-bold mb-3 text-purple">Add to Claude Desktop</h3>
+                <p class="text-secondary mb-3">
+                  Add to <code class="bg-tertiary px-2 py-1 rounded text-purple">~/.config/Claude/claude_desktop_config.json</code>:
+                </p>
+                <div class="bg-tertiary rounded-lg p-4 font-mono text-xs overflow-x-auto">
+                  <pre class="text-white">{`{
+  "mcpServers": {
+    "corvus": {
+      "command": "node",
+      "args": ["/absolute/path/to/corvus/dist/index.js"],
+      "env": {
+        "HELIUS_API_KEY": "your_helius_api_key"
+      }
+    }
+  }
+}`}</pre>
+                </div>
+                <p class="text-secondary mt-4">Restart Claude Desktop and start chatting with Solana data!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Archestra Section -->
+    <section class="py-24 bg-secondary/30">
+      <div class="container mx-auto px-6">
+        <h2 class="text-5xl font-bold mb-8 text-center gradient-text">Archestra Integration</h2>
+        <p class="text-xl text-secondary text-center mb-12 max-w-3xl mx-auto">
+          Orchestrate multiple MCP servers together using Archestra
+        </p>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+          <!-- What is Archestra -->
+          <div class="bg-secondary border border-green/30 rounded-xl p-8">
+            <h3 class="text-2xl font-bold mb-3 text-green">What is Archestra?</h3>
+            <p class="text-secondary mb-4">
+              Archestra is an orchestration tool for managing multiple MCP servers. It allows AI assistants like Claude to access multiple tools and services through a unified interface.
+            </p>
+          </div>
+
+          <!-- NPM Installation -->
+          <div class="bg-secondary border border-cyan/30 rounded-xl p-8">
+            <h3 class="text-2xl font-bold mb-4 text-cyan">Option 1: NPM Installation</h3>
+            <div class="bg-tertiary rounded-lg p-6">
+              <div class="font-mono text-sm space-y-2">
+                <div class="text-secondary"># Install Archestra</div>
+                <div class="text-white">npm install -g @modelcontextprotocol/archestra</div>
+                <div class="text-secondary mt-4"># Start Corvus via Archestra</div>
+                <div class="text-white">archestra start archestra/workspace.json</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Docker Installation -->
+          <div class="bg-secondary border border-purple/30 rounded-xl p-8">
+            <h3 class="text-2xl font-bold mb-4 text-purple">Option 2: Docker Installation</h3>
+            <div class="bg-tertiary rounded-lg p-6">
+              <div class="font-mono text-sm space-y-2">
+                <div class="text-secondary"># Pull Archestra Docker image</div>
+                <div class="text-white">docker pull mcp/archestra:latest</div>
+                <div class="text-secondary mt-4"># Run with Corvus workspace</div>
+                <div class="text-white">docker run -d \</div>
+                <div class="text-white pl-4">-v $(pwd)/archestra:/workspace \</div>
+                <div class="text-white pl-4">-v $(pwd)/dist:/app/dist \</div>
+                <div class="text-white pl-4">-e HELIUS_API_KEY=your_key \</div>
+                <div class="text-white pl-4">mcp/archestra:latest start /workspace/workspace.json</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Links -->
+          <div class="flex flex-wrap gap-4">
+            <a href="https://modelcontextprotocol.io/docs/tools/archestra" target="_blank" rel="noopener noreferrer"
+               class="px-6 py-3 bg-green/20 border border-green rounded-lg text-green font-semibold hover:bg-green/30 transition-all duration-300">
+              Archestra Documentation →
+            </a>
+            <a href="https://github.com/Allen-Saji/corvus/tree/master/archestra" target="_blank" rel="noopener noreferrer"
+               class="px-6 py-3 border border-cyan rounded-lg text-cyan font-semibold hover:bg-cyan/10 transition-all duration-300">
+              View Config Examples →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-green/20">
+      <div class="container mx-auto px-6 text-center">
+        <div class="mb-6">
+          <p class="text-2xl font-bold gradient-text">CORVUS</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-6 mb-6 text-secondary">
+          <a href="https://github.com/Allen-Saji/corvus" target="_blank" rel="noopener noreferrer"
+             class="hover:text-green transition-colors duration-300">GitHub</a>
+          <a href="https://github.com/Allen-Saji/corvus#readme" target="_blank" rel="noopener noreferrer"
+             class="hover:text-green transition-colors duration-300">Documentation</a>
+          <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer"
+             class="hover:text-green transition-colors duration-300">MCP Protocol</a>
+          <a href="https://helius.dev" target="_blank" rel="noopener noreferrer"
+             class="hover:text-green transition-colors duration-300">Helius API</a>
+        </div>
+        <p class="text-tertiary text-sm">
+          Built with ❤️ for the Solana ecosystem • Licensed under MIT
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
