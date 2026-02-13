@@ -1,8 +1,12 @@
 # Corvus
 
-**Solana DeFi Intelligence MCP Server**
+**Solana DeFi Intelligence — Dual Interface (MCP Server + CLI)**
 
 Natural language interface for querying wallets, DeFi positions, protocol metrics, and token prices on Solana blockchain.
+
+**Two Deployment Modes:**
+- 🤖 **MCP Server**: Integrate with Archestra/Claude Desktop for AI-powered analysis
+- ⚡ **CLI Tool**: Standalone terminal commands for direct queries
 
 ---
 
@@ -15,6 +19,7 @@ Natural language interface for querying wallets, DeFi positions, protocol metric
   - [Archestra Platform Deployment (Recommended)](#archestra-platform-deployment-recommended)
   - [Docker Deployment](#docker-deployment)
   - [Claude Desktop Integration](#claude-desktop-integration)
+  - [CLI Mode (Terminal)](#cli-mode-terminal)
 - [Available Tools](#available-tools)
 - [Architecture](#architecture)
 - [Testing](#testing)
@@ -127,6 +132,213 @@ Add to your `claude_desktop_config.json`:
   }
 }
 ```
+
+### CLI Mode (Terminal)
+
+Corvus can also run as a standalone command-line tool for direct wallet and DeFi analysis.
+
+#### Global Installation
+
+```bash
+# Install globally
+npm install -g .
+
+# Or use npm link for development
+npm link
+```
+
+#### CLI Commands
+
+**Direct Commands (No AI required):**
+```bash
+# Get SOL balance
+corvus balance <wallet>
+
+# Get all token holdings
+corvus tokens <wallet>
+
+# Get token prices (comma-separated)
+corvus price SOL,USDC,JitoSOL
+
+# Get recent transactions
+corvus tx <wallet> --limit 20
+
+# Analyze DeFi positions
+corvus analyze <wallet>
+
+# Get protocol TVL
+corvus protocol jito
+
+# Get top protocols
+corvus top --limit 10 --category "Liquid Staking"
+
+# Send Telegram alert
+corvus alert <chat_id> "Alert message" --severity warning
+
+# Output raw JSON for any command
+corvus balance <wallet> --json
+```
+
+**Agentic Chat Mode (AI-powered):**
+```bash
+# Start interactive AI chat (auto-detects available provider)
+corvus chat
+
+# Use specific provider
+corvus chat --provider anthropic
+corvus chat --provider openai
+corvus chat --provider google
+
+# Use local LLM (free, private)
+corvus chat --local
+
+# Example conversation:
+You: What are my DeFi positions in wallet 7xKXtg...?
+Corvus: [AI analyzes wallet and presents results]
+
+You: Now show me the top 5 lending protocols
+Corvus: [AI fetches and displays top lending protocols]
+```
+
+#### Examples
+
+```bash
+# Check your wallet balance
+corvus balance 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU
+
+# Analyze DeFi positions with pretty formatting
+corvus analyze 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU
+
+# Get current SOL and USDC prices
+corvus price SOL,USDC
+
+# View top 5 lending protocols
+corvus top --limit 5 --category Lending
+
+# Get last 25 transactions
+corvus tx <wallet> --limit 25
+
+# Pipe to other tools using --json flag
+corvus balance <wallet> --json | jq '.balance_sol'
+```
+
+**CLI Features:**
+- 🎨 Colored terminal output for better readability
+- 📊 Formatted tables for structured data
+- 🔁 `--json` flag for raw JSON output (scripting-friendly)
+- ⚡ Direct access to all Corvus tools
+- 🛠️ Cross-platform (Linux, macOS, Windows)
+- 🤖 **Agentic chat mode** with multi-LLM support (5 providers)
+- 🎯 **Custom model selection** - use any model from any provider
+
+---
+
+## Agentic Chat Mode
+
+Corvus now supports **natural language queries** through an interactive AI chat interface. Ask questions in plain English and let the AI orchestrate tool calls automatically.
+
+### **Supported LLM Providers**
+
+| Provider | Default Model | Cost Range | Custom Models |
+|----------|--------------|-----------|---------------|
+| **Anthropic** | Claude 3.5 Sonnet | $3-75/1M tokens | ✅ All Claude models supported |
+| **OpenAI** | GPT-4o | $0.15-30/1M tokens | ✅ All GPT models supported |
+| **Google** | Gemini 1.5 Flash | $0.075-5/1M tokens | ✅ All Gemini models supported |
+| **Groq** | Llama 3.3 70B | $0.05-0.24/1M tokens | ✅ All Groq models supported |
+| **Ollama** (Local) | Llama 3.2 | **FREE** | ✅ Any locally installed model |
+
+💡 **Use `corvus models` to see all available models** | [Full Model Guide →](CUSTOM_MODELS.md)
+
+### **Setup**
+
+1. **Add API key to `.env`** (choose at least one):
+   ```bash
+   ANTHROPIC_API_KEY=sk-ant-...  # Recommended
+   OPENAI_API_KEY=sk-...
+   GOOGLE_API_KEY=...
+   GROQ_API_KEY=gsk-...
+   ```
+
+2. **Or use local Ollama** (no API key needed):
+   ```bash
+   # Install Ollama
+   curl -fsSL https://ollama.com/install.sh | sh
+
+   # Pull a model
+   ollama pull llama2
+
+   # Use with Corvus
+   corvus chat --local
+   ```
+
+3. **🆕 Custom Model Selection** (choose any model from any provider):
+   ```bash
+   # View all available models
+   corvus models              # List all providers
+   corvus models anthropic    # Filter by provider
+
+   # Use custom model via CLI flag
+   corvus chat --provider openai --model gpt-4o-mini
+   corvus chat --provider anthropic --model claude-3-5-haiku-20241022
+   corvus chat --local --model mistral
+
+   # Or set default in config
+   corvus config set llm.model gpt-4o-mini
+   corvus chat  # Uses config default
+   ```
+
+   **📖 See [CUSTOM_MODELS.md](CUSTOM_MODELS.md) for full model list and recommendations**
+
+### **Usage Examples**
+
+**Basic Chat:**
+```bash
+$ corvus chat
+
+🤖 Corvus AI Chat
+Provider: anthropic | Model: claude-3-5-sonnet-20241022
+
+You: What's the SOL price?
+Corvus: The current SOL price is $79.17 USD.
+
+You: Analyze wallet 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU
+Corvus: [Analyzes wallet and shows DeFi positions]
+
+You: exit
+📊 Session Summary:
+  Turns: 2
+  Estimated cost: $0.0023
+```
+
+**Advanced Options:**
+```bash
+# Use specific provider
+corvus chat --provider openai
+
+# Use specific model
+corvus chat --provider anthropic --model claude-3-opus-20240229
+
+# Use local LLM (private, free)
+corvus chat --local
+
+# Skip privacy warning
+corvus chat --no-privacy-warning
+```
+
+### **Chat Commands**
+
+During a chat session:
+- `exit` or `quit` - End session and show summary
+- `clear` - Reset conversation history
+- Any natural language query - Ask questions about Solana/DeFi
+
+### **Security & Privacy**
+
+- ⚠️ **Data Privacy:** Queries (including wallet addresses) are sent to the selected LLM provider
+- 🔒 **Private Mode:** Use `--local` flag for Ollama to keep all data on your machine
+- 💰 **Cost Limits:** Sessions auto-terminate after 15 turns or $0.50 estimated cost
+- 🛡️ **Input Validation:** All tool parameters are validated before execution
+- 🚫 **Safety:** AI cannot execute destructive actions without confirmation
 
 ---
 
