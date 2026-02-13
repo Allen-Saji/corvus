@@ -107,7 +107,8 @@ export async function analyzeWalletDeFiPositionsTool(
     // Bucket 1: Check known DeFi registry
     const knownEntry = getKnownDeFiEntry(token.mint);
 
-    if (knownEntry) {
+    // Exclude base assets and stablecoins from DeFi classification
+    if (knownEntry && knownEntry.category !== "Base Asset" && knownEntry.category !== "Stablecoin") {
       knownPositions.push({
         mint: token.mint,
         symbol: token.symbol || knownEntry.symbol,
